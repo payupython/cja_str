@@ -1,0 +1,23 @@
+{
+  // Recomendaciones de extensiones para desarrollo Python, Dash, análisis de datos y debugging
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-toolsai.jupyter",
+    "ms-toolsai.jupyter-keymap",
+    "ms-toolsai.jupyter-cell-tags",
+    "quicktype.pandas-vscode",
+    "njpwerner.autodocstring",
+    "dash.snippets",
+    "esbenp.prettier-vscode",
+    "ms-python.black-formatter",
+    "mikestead.dotenv",
+    "littlefoxteam.vscode-python-test-adapter",
+    "ms-pytest.pytest",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "aaron-bond.better-comments",
+    "ms-python.python-environment-manager",
+    "charliermarsh.ruff"
+  ]
+} 

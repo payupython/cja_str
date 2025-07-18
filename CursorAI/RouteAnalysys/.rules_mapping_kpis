@@ -1,0 +1,95 @@
+# Mapeo de columnas de datos reales a campos usados en KPIs avanzados
+column_mapping:
+  user_id: "user_id"
+  session_id: "session_id"
+  ruta: "Interactions"
+  fecha_sesion: "fecha_sesion"
+  evento: "evento"
+  timestamp: "timestamp"
+  # Añade aquí más campos según tus datos reales
+
+# Mapeo específico para KPIs (avanzados y estándar)
+kpi_specific_mapping:
+  drop_off_rate:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    step: "begin_checkout"  # Cambia por el evento/paso que quieras analizar
+  backtracking_rate:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  average_path_length:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  excessive_steps:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    threshold: 2
+  avg_time_between_events:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    timestamp: "timestamp"
+  conversion_rate_per_path:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+  unique_paths:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  path_entropy:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  most_common_entry_event:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  last_event_before_dropoff_or_conversion:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+  most_common_exit_point:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  event_repetition_rate:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  average_click_depth:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  key_event_ratio:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    key_event: "purchase_GA4"
+  total_time_on_path:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    timestamp: "timestamp"
+  path_standard_deviation:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  first_key_action:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    key_events_list: ["add_to_cart", "begin_checkout"]
+  technical_bounce_rate:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  # KPIs avanzados ya estaban mapeados abajo...
+  "Usuarios con más de X eventos antes de la conversión":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+  "Sesiones con múltiples conversiones":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+  "Rutas con múltiples conversiones":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+  "Número de pasos medio hasta la primera conversión":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+  "Número de pasos medio entre conversiones sucesivas":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4" 

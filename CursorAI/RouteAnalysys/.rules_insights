@@ -1,0 +1,53 @@
+# Guía de interpretación de KPIs de análisis de rutas
+
+KPI: drop_off_rate
+  Significado: Porcentaje de usuarios que abandonan la ruta justo después de un paso/evento concreto (por ejemplo, "add_to_cart").
+  Interpretación: Si el resultado es 25.0, significa que el 25% de los usuarios que llegaron a ese paso abandonaron justo después, sin continuar la ruta.
+
+KPI: key_event_ratio
+  Significado: Porcentaje de sesiones en las que ocurre un evento clave (por ejemplo, "add_to_cart").
+  Interpretación: Si el resultado es 60.0, significa que el 60% de las sesiones contienen al menos una vez ese evento clave.
+
+KPI: average_path_length
+  Significado: Longitud promedio de las rutas (número de eventos por sesión/usuario).
+  Interpretación: Si el resultado es 12.5, en promedio los usuarios realizan 12-13 eventos por ruta.
+
+KPI: Usuarios con más de X eventos antes de la conversión
+  Significado: Número de usuarios que realizaron más de X eventos antes de llegar a la conversión (por ejemplo, antes de "purchase").
+  Interpretación: Si el resultado es (2, {'user1', 'user3'}), significa que 2 usuarios (user1 y user3) hicieron más de X eventos antes de convertir.
+
+KPI: Sesiones con múltiples conversiones
+  Significado: Número de sesiones donde el evento de conversión ocurre más de una vez.
+  Interpretación: Si el resultado es 1, solo una sesión tuvo más de una conversión.
+
+KPI: Rutas con múltiples conversiones
+  Significado: Número de rutas (secuencias de eventos) donde el evento de conversión ocurre dos o más veces.
+  Interpretación: Si el resultado es 1, solo una ruta tiene múltiples conversiones.
+
+KPI: Número de pasos medio hasta la primera conversión
+  Significado: Promedio de pasos que realiza un usuario desde el primer evento hasta la primera conversión.
+  Interpretación: Si el resultado es 4.0, en promedio los usuarios hacen 4 eventos antes de convertir por primera vez.
+
+KPI: Número de pasos medio entre conversiones sucesivas
+  Significado: Promedio de pasos entre una conversión y la siguiente, para usuarios con múltiples conversiones.
+  Interpretación: Si el resultado es 2.5, en promedio hay 2-3 eventos entre conversiones sucesivas.
+
+KPI: unique_paths
+  Significado: Número de rutas únicas (diversidad de navegación).
+
+KPI: path_entropy
+  Significado: Medida de dispersión/variedad de rutas (más alto = más variedad).
+
+KPI: most_common_entry_event
+  Significado: Evento más frecuente al inicio de las rutas.
+
+KPI: most_common_exit_point
+  Significado: Evento más frecuente al final de las rutas.
+
+KPI: technical_bounce_rate
+  Significado: Porcentaje de sesiones con solo un evento (rebote técnico).
+
+# Notas
+- Si un KPI da 0 o un valor inesperado, revisa si tus datos realmente contienen casos que cumplan la condición.
+- Verifica que el mapping y los parámetros (por ejemplo, evento_conversion, step, etc.) sean correctos y coincidan con los valores reales de tus datos.
+- Usa los prints de depuración para ver qué columnas y valores está usando el script. 

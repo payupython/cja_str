@@ -1,0 +1,22 @@
+
+1 Trabaja siempre con un entorno virtual, Pidelo si no está creado.
+2. Pide información o documentacion oficial por ejemplo https://dash.plotly.com/
+3. Ejemplo de información mínima para un callback:
+Tengo un dcc.Dropdown con id "dropdown-evento" y un dcc.Graph con id "grafico-evento".
+Quiero que al seleccionar un evento en el dropdown, el gráfico muestre solo los datos de ese evento.
+
+4. Sugiere SIEMPRE la estructura de carpetas y comprueba 
+Ejemplo
+RouteAnalysys/app.py — Código principal de la app Dash.
+RouteAnalysys/requirements.txt — Dependencias del proyecto.
+RouteAnalysys/venv/ — Entorno virtual creado.
+RouteAnalysys/data/import/ y RouteAnalysys/data/export/ — Carpetas para datos.
+RouteAnalysys/assets/ — Carpeta para recursos estáticos (CSS, imágenes, etc.).
+RouteAnalysys/.vscode/extensions.json — Recomendaciones de extensiones para VS Code.
+
+5.  Para ejecutar bien dash
+   if __name__ == '__main__':
+       app.run(debug=True)
+
+---
+

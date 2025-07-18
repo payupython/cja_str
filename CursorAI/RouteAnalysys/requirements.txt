@@ -1,0 +1,6 @@
+dash
+pandas[parquet]
+plotly
+numpy
+dash-bootstrap-components
+pyyaml 

@@ -1,0 +1,194 @@
+route_analysis_rules:
+  drop_off_rate:
+    description: "Porcentaje de usuarios que abandonan después de un paso determinado."
+    formula: "drop_off_rate = (users_abandoning_after_step / users_at_step) * 100"
+    parameters:
+      step: "Número del paso donde se mide la fuga"
+
+  backtracking_rate:
+    description: "Proporción de sesiones que retroceden a pasos anteriores."
+    formula: "backtracking_rate = (sessions_with_backtrack / total_sessions) * 100"
+    conditions:
+      - "event_sequence contains a previous event repeated after a forward step"
+
+  average_path_length:
+    description: "Longitud promedio de la secuencia de eventos por sesión o usuario."
+    formula: "avg_path_length = total_number_of_events / total_number_of_sessions"
+    scope: "per_user_or_session"
+
+  excessive_steps:
+    description: "Porcentaje de sesiones con más pasos de los esperados."
+    formula: "excessive_steps = count(path_length > threshold) / total_sessions * 100"
+    parameters:
+      threshold: 3
+
+  avg_time_between_events:
+    description: "Tiempo promedio (en segundos) entre eventos consecutivos."
+    formula: "avg_time = sum(time_diff_between_events) / number_of_transitions"
+    scope: "per_user"
+
+  conversion_rate_per_path:
+    description: "Tasa de conversión para rutas específicas."
+    formula: "conversion_rate = conversions_on_path / total_users_on_path * 100"
+    conditions:
+      - "target_event is defined"
+
+  unique_paths:
+    description: "Número total de rutas únicas entre usuarios."
+    formula: "unique_paths = count(distinct(event_sequences))"
+    scope: "global"
+
+  path_entropy:
+    description: "Entropía de rutas de usuario, medida de dispersión."
+    formula: "entropy = - sum(p_i * log(p_i)) for each unique path"
+    requirements:
+      - "calculate probability p_i for each unique path"
+
+  most_common_entry_event:
+    description: "Evento inicial más frecuente entre todas las rutas."
+    formula: "mode(first_event_across_users)"
+
+  last_event_before_dropoff_or_conversion:
+    description: "Último evento registrado antes del abandono o la conversión."
+    formula: "event_sequence[-1] before dropoff or conversion marker"
+
+  # KPIs extra integrados
+  most_common_exit_point:
+    description: "Evento o página donde los usuarios abandonan más frecuentemente."
+    formula: "most_common_exit = mode(last_event_per_session)"
+
+  event_repetition_rate:
+    description: "Frecuencia con la que un usuario repite el mismo evento en una sesión."
+    formula: "event_repetition_rate = repeated_events / total_events_in_session"
+
+  average_click_depth:
+    description: "Nivel promedio de profundidad que alcanzan los usuarios desde la página de entrada."
+    formula: "click_depth = mean(hierarchical_level_of_visited_urls)"
+
+  key_event_ratio:
+    description: "Proporción de sesiones en las que ocurre un evento crítico."
+    formula: "key_event_ratio = (sessions_with_key_event / total_sessions) * 100"
+    parameters:
+      key_event: "Nombre del evento clave a observar (ej. 'add_to_cart')"
+
+  total_time_on_path:
+    description: "Tiempo acumulado desde el primer hasta el último evento de la sesión."
+    formula: "total_time = timestamp_last_event - timestamp_first_event"
+
+  path_standard_deviation:
+    description: "Variabilidad en la longitud de rutas entre usuarios."
+    formula: "path_length_std = std(length_of_paths_by_session)"
+
+  first_key_action:
+    description: "Primer evento de valor que ocurre tras la entrada del usuario."
+    formula: "first_key_action = first(event in key_events_list) per session"
+    parameters:
+      key_events_list: "Lista de eventos considerados clave"
+
+  technical_bounce_rate:
+    description: "Porcentaje de sesiones con un solo evento o sin interacción."
+    formula: "bounce_rate = (sessions_with_one_event / total_sessions) * 100"
+
+route_analysis_kpis_advanced:
+  - id: 1
+    nombre: "Usuarios con más de X eventos antes de la conversión"
+    descripcion: >
+      Número de usuarios que realizan más de X eventos antes de completar el evento de conversión.
+      Se analiza la secuencia de eventos por usuario para contar cuántos pasos hizo antes del evento de conversión.
+    evento_conversion: "purchase"
+    parametro_x: 3
+    formula: >
+      Conteo de usuarios únicos cuyo número de eventos previos al evento de conversión es mayor que X.
+    ejemplo:
+      datos_entrada:
+        - user_id: 1
+          ruta: "home > search > product_view > add_to_cart > purchase"
+          fecha_sesion: "2025-07-18"
+        - user_id: 2
+          ruta: "home > product_view > purchase"
+          fecha_sesion: "2025-07-18"
+      resultado: 1
+      descripcion_resultado: "Solo el usuario 1 realizó más de 3 eventos antes de la conversión (4 pasos), el usuario 2 hizo solo 2 pasos."
+
+  - id: 2
+    nombre: "Sesiones con múltiples conversiones"
+    descripcion: >
+      Número de sesiones donde el evento de conversión ocurre más de una vez.
+      Se cuentan sesiones en las que la ruta contiene el evento de conversión dos o más veces.
+    evento_conversion: "purchase"
+    formula: >
+      Conteo de sesiones con más de una instancia del evento de conversión.
+    ejemplo:
+      datos_entrada:
+        - user_id: 3
+          ruta: "home > purchase > browse > purchase > logout"
+          fecha_sesion: "2025-07-18"
+        - user_id: 4
+          ruta: "home > product_view > purchase"
+          fecha_sesion: "2025-07-18"
+      resultado: 1
+      descripcion_resultado: "Solo la sesión del usuario 3 tiene múltiples conversiones."
+
+  - id: 3
+    nombre: "Rutas con múltiples conversiones"
+    descripcion: >
+      Número de rutas (secuencias de eventos) donde el evento de conversión ocurre dos o más veces.
+      Se analizan todas las rutas y se cuentan aquellas que incluyen más de un evento de conversión.
+    evento_conversion: "purchase"
+    definicion_ruta: "Ruta definida por sesión de usuario, como secuencia de eventos separados por ' > '."
+    formula: >
+      Conteo de rutas que contienen más de una instancia del evento de conversión.
+    ejemplo:
+      datos_entrada:
+        - user_id: 5
+          ruta: "search > purchase > browse > purchase > purchase"
+          fecha_sesion: "2025-07-19"
+        - user_id: 6
+          ruta: "home > product_view > purchase"
+          fecha_sesion: "2025-07-19"
+      resultado: 1
+      descripcion_resultado: "Solo la ruta del usuario 5 tiene múltiples conversiones."
+
+  - id: 4
+    nombre: "Número de pasos medio hasta la primera conversión"
+    descripcion: >
+      Promedio de pasos que realiza un usuario desde su primer evento hasta su primera conversión.
+      Cada paso se considera un evento en la ruta previa al primer evento de conversión.
+    evento_conversion: "purchase"
+    formula: >
+      Suma de eventos previos a la primera conversión por usuario dividido entre el total de usuarios que convirtieron.
+    ejemplo:
+      datos_entrada:
+        - user_id: 7
+          ruta: "home > product_view > add_to_cart > purchase"
+          fecha_sesion: "2025-07-20"
+        - user_id: 8
+          ruta: "home > search > purchase"
+          fecha_sesion: "2025-07-20"
+      calculo:
+        user_7: 3 # pasos antes de purchase
+        user_8: 2
+      resultado: 2.5
+      descripcion_resultado: "Promedio de pasos hasta primera conversión para los usuarios 7 y 8 es (3 + 2)/2 = 2.5."
+
+  - id: 5
+    nombre: "Número de pasos medio entre conversiones sucesivas"
+    descripcion: >
+      Promedio de pasos entre una conversión y la siguiente, para usuarios con múltiples conversiones.
+      Se calcula la diferencia de pasos entre eventos de conversión consecutivos en la ruta.
+    evento_conversion: "purchase"
+    formula: >
+      Suma de eventos entre conversiones sucesivas dividido entre el número total de pares de conversiones.
+    ejemplo:
+      datos_entrada:
+        - user_id: 9
+          ruta: "home > purchase > browse > add_to_cart > purchase > logout"
+          fecha_sesion: "2025-07-21"
+        - user_id: 10
+          ruta: "search > purchase > purchase"
+          fecha_sesion: "2025-07-21"
+      calculo:
+        user_9: 3 # pasos entre 1ra y 2da purchase
+        user_10: 0 # pasos entre purchases consecutivos (evento inmediato)
+      resultado: 1.5
+      descripcion_resultado: "Promedio de pasos entre conversiones sucesivas es (3 + 0)/2 = 1.5."
