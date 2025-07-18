@@ -43,10 +43,6 @@ kpi_specific_mapping:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
     top_n: 3
-  last_event_before_dropoff_or_conversion:
-    usuario: "user_id"
-    secuencia_eventos: "Interactions"
-    evento_conversion: "purchase_GA4"
   most_common_exit_point:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
@@ -72,14 +68,28 @@ kpi_specific_mapping:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
     key_events_list: ["add_to_cart", "begin_checkout"]
+    top_n: 5
   technical_bounce_rate:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
-  # KPIs avanzados ya estaban mapeados abajo...
+  last_event_before_dropoff_or_conversion:
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+    top_n: 5
+  "Eventos más frecuentes":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    top_n: 10
+  "Secuencias de 2 eventos más frecuentes":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    top_n: 10
   "Usuarios con más de X eventos antes de la conversión":
     usuario: "user_id"
     secuencia_eventos: "Interactions"
     evento_conversion: "purchase_GA4"
+    parametro_x: 2
   "Sesiones con múltiples conversiones":
     usuario: "user_id"
     secuencia_eventos: "Interactions"

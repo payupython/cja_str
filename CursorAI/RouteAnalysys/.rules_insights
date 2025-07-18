@@ -4,6 +4,30 @@ KPI: drop_off_rate
   Significado: Porcentaje de usuarios que abandonan la ruta justo después de un paso/evento concreto (por ejemplo, "add_to_cart").
   Interpretación: Si el resultado es 25.0, significa que el 25% de los usuarios que llegaron a ese paso abandonaron justo después, sin continuar la ruta.
 
+KPI: backtracking_rate
+  Significado: Porcentaje de sesiones donde los usuarios retroceden a eventos anteriores en la ruta.
+  Interpretación: Si el resultado es 15.0, significa que el 15% de las sesiones contienen patrones de navegación hacia atrás (usuarios que vuelven a eventos previos).
+
+KPI: conversion_rate_per_path
+  Significado: Porcentaje de sesiones que contienen el evento de conversión especificado.
+  Interpretación: Si el resultado es 66.7, significa que el 66.7% de las sesiones incluyen al menos una conversión.
+
+KPI: excessive_steps
+  Significado: Porcentaje de sesiones que tienen más pasos de los esperados (según el threshold configurado).
+  Interpretación: Si el resultado es 30.0, significa que el 30% de las sesiones son más largas de lo normal, lo que puede indicar problemas de usabilidad.
+
+KPI: last_event_before_dropoff_or_conversion
+  Significado: Lista de eventos que ocurren justo antes de una conversión o abandono.
+  Interpretación: Estos eventos son críticos porque preceden a la decisión final del usuario. Eventos frecuentes aquí pueden ser puntos de optimización.
+
+KPI: event_repetition_rate
+  Significado: Porcentaje de eventos que se repiten dentro de una misma sesión.
+  Interpretación: Si el resultado es 10.0, significa que el 10% de todos los eventos en las sesiones son repeticiones, lo que puede indicar confusión del usuario.
+
+KPI: path_standard_deviation
+  Significado: Variabilidad en la longitud de las rutas entre diferentes usuarios.
+  Interpretación: Un valor alto indica que hay mucha diferencia en el comportamiento de navegación entre usuarios. Un valor bajo sugiere patrones más consistentes.
+
 KPI: key_event_ratio
   Significado: Porcentaje de sesiones en las que ocurre un evento clave (por ejemplo, "add_to_cart").
   Interpretación: Si el resultado es 60.0, significa que el 60% de las sesiones contienen al menos una vez ese evento clave.
@@ -46,6 +70,14 @@ KPI: most_common_exit_point
 
 KPI: technical_bounce_rate
   Significado: Porcentaje de sesiones con solo un evento (rebote técnico).
+
+KPI: Eventos más frecuentes
+  Significado: Lista de los eventos más frecuentes en todas las rutas, independientemente de su posición.
+  Interpretación: Te ayuda a identificar qué acciones son más populares entre los usuarios, lo que puede indicar puntos de interés o problemas de usabilidad.
+
+KPI: Secuencias de 2 eventos más frecuentes
+  Significado: Patrones de navegación más comunes donde un evento es seguido inmediatamente por otro.
+  Interpretación: Identifica los flujos de navegación más naturales y puede revelar patrones de comportamiento esperados o inesperados.
 
 # Notas
 - Si un KPI da 0 o un valor inesperado, revisa si tus datos realmente contienen casos que cumplan la condición.

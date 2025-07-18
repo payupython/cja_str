@@ -108,7 +108,7 @@ def kpi_most_common_entry_event(df, user_col, ruta_col, top_n=5):
     
     return "\n".join(tabla)
 
-def kpi_last_event_before_dropoff_or_conversion(df, user_col, ruta_col, evento_conversion):
+def kpi_last_event_before_dropoff_or_conversion(df, user_col, ruta_col, evento_conversion, top_n=5):
     ultimos = []
     for _, row in df.iterrows():
         eventos = parsear_eventos(row[ruta_col])
@@ -116,7 +116,22 @@ def kpi_last_event_before_dropoff_or_conversion(df, user_col, ruta_col, evento_c
             idx = [i for i, ev in enumerate(eventos) if evento_conversion in ev]
             if idx and idx[0] > 0:
                 ultimos.append(eventos[idx[0]-1])
-    return ultimos
+    
+    if not ultimos:
+        return "No se encontraron eventos previos a conversión"
+    
+    from collections import Counter
+    counter = Counter(ultimos)
+    # Devolver tabla con top N eventos más frecuentes
+    top_events = counter.most_common(top_n)
+    
+    # Crear tabla formateada
+    tabla = []
+    for i, (evento, frecuencia) in enumerate(top_events, 1):
+        porcentaje = (frecuencia / len(ultimos)) * 100
+        tabla.append(f"{i}. {evento}: {frecuencia} veces ({porcentaje:.1f}%)")
+    
+    return "\n".join(tabla)
 
 def kpi_most_common_exit_point(df, user_col, ruta_col, top_n=5):
     salidas = [parsear_eventos(row[ruta_col])[-1] for _, row in df.iterrows() if parsear_eventos(row[ruta_col])]
@@ -165,7 +180,7 @@ def kpi_path_standard_deviation(df, user_col, ruta_col):
     longitudes = [len(parsear_eventos(row[ruta_col])) for _, row in df.iterrows()]
     return np.std(longitudes) if longitudes else 0
 
-def kpi_first_key_action(df, user_col, ruta_col, key_events_list):
+def kpi_first_key_action(df, user_col, ruta_col, key_events_list, top_n=5):
     acciones = []
     for _, row in df.iterrows():
         eventos = parsear_eventos(row[ruta_col])
@@ -173,7 +188,22 @@ def kpi_first_key_action(df, user_col, ruta_col, key_events_list):
             if any(key in ev for key in key_events_list):
                 acciones.append(ev)
                 break
-    return acciones
+    
+    if not acciones:
+        return "No se encontraron acciones clave"
+    
+    from collections import Counter
+    counter = Counter(acciones)
+    # Devolver tabla con top N eventos más frecuentes
+    top_events = counter.most_common(top_n)
+    
+    # Crear tabla formateada
+    tabla = []
+    for i, (evento, frecuencia) in enumerate(top_events, 1):
+        porcentaje = (frecuencia / len(acciones)) * 100
+        tabla.append(f"{i}. {evento}: {frecuencia} veces ({porcentaje:.1f}%)")
+    
+    return "\n".join(tabla)
 
 def kpi_technical_bounce_rate(df, user_col, ruta_col):
     bounces = 0
@@ -232,6 +262,54 @@ def kpi_pasos_entre_conversiones(df, user_col, ruta_col, evento_conversion):
                 pasos_entre.append(indices[i] - indices[i-1] - 1)
     return sum(pasos_entre) / len(pasos_entre) if pasos_entre else 0
 
+def kpi_most_common_events(df, user_col, ruta_col, top_n=10):
+    """Eventos más frecuentes en general (todos los eventos de todas las rutas)"""
+    todos_eventos = []
+    for _, row in df.iterrows():
+        eventos = parsear_eventos(row[ruta_col])
+        todos_eventos.extend(eventos)
+    
+    if not todos_eventos:
+        return "No se encontraron eventos"
+    
+    from collections import Counter
+    counter = Counter(todos_eventos)
+    # Devolver tabla con top N eventos más frecuentes
+    top_events = counter.most_common(top_n)
+    
+    # Crear tabla formateada
+    tabla = []
+    for i, (evento, frecuencia) in enumerate(top_events, 1):
+        porcentaje = (frecuencia / len(todos_eventos)) * 100
+        tabla.append(f"{i}. {evento}: {frecuencia} veces ({porcentaje:.1f}%)")
+    
+    return "\n".join(tabla)
+
+def kpi_most_common_2grams(df, user_col, ruta_col, top_n=10):
+    """Secuencias de 2 eventos más frecuentes"""
+    bigrams = []
+    for _, row in df.iterrows():
+        eventos = parsear_eventos(row[ruta_col])
+        for i in range(len(eventos) - 1):
+            bigram = f"{eventos[i]} → {eventos[i+1]}"
+            bigrams.append(bigram)
+    
+    if not bigrams:
+        return "No se encontraron secuencias de 2 eventos"
+    
+    from collections import Counter
+    counter = Counter(bigrams)
+    # Devolver tabla con top N secuencias más frecuentes
+    top_sequences = counter.most_common(top_n)
+    
+    # Crear tabla formateada
+    tabla = []
+    for i, (secuencia, frecuencia) in enumerate(top_sequences, 1):
+        porcentaje = (frecuencia / len(bigrams)) * 100
+        tabla.append(f"{i}. {secuencia}: {frecuencia} veces ({porcentaje:.1f}%)")
+    
+    return "\n".join(tabla)
+
 # --- Diccionario de funciones KPI ---
 KPI_FUNCTIONS = {
     "drop_off_rate": kpi_drop_off_rate,
@@ -257,6 +335,8 @@ KPI_FUNCTIONS = {
     "Rutas con múltiples conversiones": kpi_rutas_multiples_conversiones,
     "Número de pasos medio hasta la primera conversión": kpi_pasos_hasta_primera_conversion,
     "Número de pasos medio entre conversiones sucesivas": kpi_pasos_entre_conversiones,
+    "Eventos más frecuentes": kpi_most_common_events,
+    "Secuencias de 2 eventos más frecuentes": kpi_most_common_2grams,
 }
 
 def cargar_insights():
