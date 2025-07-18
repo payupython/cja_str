@@ -266,18 +266,48 @@ if __name__ == '__main__':
 
     ayuda_kpis = cargar_insights()
 
+    resultados = []
     for kpi_name, params in kpi_map.items():
         func = KPI_FUNCTIONS.get(kpi_name)
+        evento_conversion = params.get('evento_conversion', '')
         if func:
             func_params = {k: params[k] for k in params if k not in ['usuario', 'secuencia_eventos']}
             try:
                 result = func(df, user_col, ruta_col, **func_params)
-                print(f"\nKPI: {kpi_name}")
-                print(f"  Resultado: {result}")
-                if result is not None and kpi_name in ayuda_kpis:
-                    print(f"  Ayuda:\n{ayuda_kpis[kpi_name]}")
+                if result is not None:
+                    ayuda = ayuda_kpis.get(kpi_name, "")
+                    resultados.append({
+                        "KPI": kpi_name,
+                        "Resultado": result,
+                        "Evento de conversión": evento_conversion,
+                        "Guía de interpretación": ayuda
+                    })
             except Exception as e:
-                print(f"\nKPI: {kpi_name}")
-                print(f"  [ERROR] No se pudo calcular: {e}")
+                resultados.append({
+                    "KPI": kpi_name,
+                    "Resultado": f"[ERROR] {e}",
+                    "Evento de conversión": evento_conversion,
+                    "Guía de interpretación": ayuda_kpis.get(kpi_name, "")
+                })
         else:
-            print(f"\nKPI: {kpi_name} (No implementado en el script)") 
+            resultados.append({
+                "KPI": kpi_name,
+                "Resultado": "No implementado en el script",
+                "Evento de conversión": evento_conversion,
+                "Guía de interpretación": ayuda_kpis.get(kpi_name, "")
+            })
+
+    # Mostrar resultados en formato tabla
+    df_resultados = pd.DataFrame(resultados)
+    print("\nRESULTADOS DE KPIs EN FORMATO TABLA:\n")
+    print(df_resultados.to_string(index=False))
+
+    # Exportar resultados a CSV
+    export_path_csv = 'data/export/resultados_kpis.csv'
+    df_resultados.to_csv(export_path_csv, index=False)
+    print(f"\n[INFO] Resultados exportados a: {export_path_csv}")
+
+    # Exportar resultados a Excel
+    export_path_xlsx = 'data/export/resultados_kpis.xlsx'
+    df_resultados.to_excel(export_path_xlsx, index=False)
+    print(f"[INFO] Resultados exportados a: {export_path_xlsx}") 
