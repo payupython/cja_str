@@ -20,7 +20,7 @@ route_analysis_rules:
     description: "Porcentaje de sesiones con más pasos de los esperados."
     formula: "excessive_steps = count(path_length > threshold) / total_sessions * 100"
     parameters:
-      threshold: 3
+      threshold: 4
 
   avg_time_between_events:
     description: "Tiempo promedio (en segundos) entre eventos consecutivos."

@@ -1,3 +1,4 @@
 user_id,session_id,Interactions,identificados
 2093240823.1730716597,1, 1 session_start - 1 first_visit - 1 begin_checkout@,0
-753587330.1731576280,1,start_checkou - 1 begin_checkout@ - 1 purchase_GA4 - 1 purchase_GA4,0
+753587330.1731576280,1,start_checkout - 1 begin_checkout@ - 1 purchase_GA4 - algo -1 purchase_GA4,0
+753587330.1731576290,1,first_visit - 3 purchase_GA4 - 1 begin_checkout@ - first_visit,0

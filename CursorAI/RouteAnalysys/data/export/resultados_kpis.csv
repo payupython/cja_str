@@ -1,0 +1,69 @@
+KPI,Resultado,Evento de conversión,Guía de interpretación
+drop_off_rate,50.0,purchase_GA4,"  Significado: Porcentaje de usuarios que abandonan la ruta justo después de un paso/evento concreto (por ejemplo, ""add_to_cart"").
+  Interpretación: Si el resultado es 25.0, significa que el 25% de los usuarios que llegaron a ese paso abandonaron justo después, sin continuar la ruta."
+backtracking_rate,66.66666666666666,,"  Significado: Porcentaje de sesiones donde los usuarios retroceden a eventos anteriores en la ruta.
+  Interpretación: Si el resultado es 15.0, significa que el 15% de las sesiones contienen patrones de navegación hacia atrás (usuarios que vuelven a eventos previos)."
+average_path_length,3.6666666666666665,,"  Significado: Longitud promedio de las rutas (número de eventos por sesión/usuario).
+  Interpretación: Si el resultado es 12.5, en promedio los usuarios realizan 12-13 eventos por ruta."
+excessive_steps,100.0,,"  Significado: Porcentaje de sesiones que tienen más pasos de los esperados (según el threshold configurado).
+  Interpretación: Si el resultado es 30.0, significa que el 30% de las sesiones son más largas de lo normal, lo que puede indicar problemas de usabilidad."
+conversion_rate_per_path,66.66666666666666,purchase_GA4,"  Significado: Porcentaje de sesiones que contienen el evento de conversión especificado.
+  Interpretación: Si el resultado es 66.7, significa que el 66.7% de las sesiones incluyen al menos una conversión."
+unique_paths,3,,  Significado: Número de rutas únicas (diversidad de navegación).
+path_entropy,1.0986122886681096,,  Significado: Medida de dispersión/variedad de rutas (más alto = más variedad).
+most_common_entry_event,"1. session_start: 1 veces (33.3%)
+2. start_checkout: 1 veces (33.3%)
+3. first_visit: 1 veces (33.3%)",,  Significado: Evento más frecuente al inicio de las rutas.
+most_common_exit_point,"1. begin_checkout: 1 veces (33.3%)
+2. purchase_GA4: 1 veces (33.3%)
+3. first_visit: 1 veces (33.3%)",,  Significado: Evento más frecuente al final de las rutas.
+event_repetition_rate,18.181818181818183,,"  Significado: Porcentaje de eventos que se repiten dentro de una misma sesión.
+  Interpretación: Si el resultado es 10.0, significa que el 10% de todos los eventos en las sesiones son repeticiones, lo que puede indicar confusión del usuario."
+key_event_ratio,66.66666666666666,,"  Significado: Porcentaje de sesiones en las que ocurre un evento clave (por ejemplo, ""add_to_cart"").
+  Interpretación: Si el resultado es 60.0, significa que el 60% de las sesiones contienen al menos una vez ese evento clave."
+path_standard_deviation,0.4714045207910317,,"  Significado: Variabilidad en la longitud de las rutas entre diferentes usuarios.
+  Interpretación: Un valor alto indica que hay mucha diferencia en el comportamiento de navegación entre usuarios. Un valor bajo sugiere patrones más consistentes."
+first_key_action,1. begin_checkout: 3 veces (100.0%),,
+technical_bounce_rate,0.0,,  Significado: Porcentaje de sesiones con solo un evento (rebote técnico).
+last_event_before_dropoff_or_conversion,"1. begin_checkout: 1 veces (50.0%)
+2. first_visit: 1 veces (50.0%)",purchase_GA4,"  Significado: Lista de eventos que ocurren justo antes de una conversión o abandono.
+  Interpretación: Estos eventos son críticos porque preceden a la decisión final del usuario. Eventos frecuentes aquí pueden ser puntos de optimización."
+Eventos más frecuentes,"1. first_visit: 3 veces (27.3%)
+2. begin_checkout: 3 veces (27.3%)
+3. purchase_GA4: 3 veces (27.3%)
+4. session_start: 1 veces (9.1%)
+5. start_checkout: 1 veces (9.1%)",,"  Significado: Lista de los eventos más frecuentes en todas las rutas, independientemente de su posición.
+  Interpretación: Te ayuda a identificar qué acciones son más populares entre los usuarios, lo que puede indicar puntos de interés o problemas de usabilidad."
+Secuencias de 2 eventos más frecuentes,"1. session_start → first_visit: 1 veces (12.5%)
+2. first_visit → begin_checkout: 1 veces (12.5%)
+3. start_checkout → begin_checkout: 1 veces (12.5%)
+4. begin_checkout → purchase_GA4: 1 veces (12.5%)
+5. purchase_GA4 → purchase_GA4: 1 veces (12.5%)
+6. first_visit → purchase_GA4: 1 veces (12.5%)
+7. purchase_GA4 → begin_checkout: 1 veces (12.5%)
+8. begin_checkout → first_visit: 1 veces (12.5%)",,"  Significado: Patrones de navegación más comunes donde un evento es seguido inmediatamente por otro.
+  Interpretación: Identifica los flujos de navegación más naturales y puede revelar patrones de comportamiento esperados o inesperados."
+Rutas con navegación anómala post-conversión,50.0,purchase_GA4,"  Significado: Porcentaje de rutas que tienen conversión pero continúan navegando después.
+  Interpretación: Un valor alto puede indicar problemas en el proceso de conversión o usuarios confundidos que siguen navegando después de comprar. Si el resultado es 25.0, significa que el 25% de las rutas con conversión continúan navegando después, lo que puede indicar problemas en la confirmación de compra o usuarios que no entienden que ya completaron la transacción."
+Conversiones rápidas anómalas,50.0,purchase_GA4,"  Significado: Porcentaje de conversiones que ocurren muy rápidamente (pocos pasos).
+  Interpretación: Puede indicar usuarios muy decididos, pero también posibles fraudes o errores en el tracking. Si el resultado es 15.0, significa que el 15% de las conversiones ocurren en menos de 2 pasos, lo que puede indicar usuarios que ya sabían qué querían comprar, pero también posibles actividades fraudulentas o errores en el sistema de tracking."
+Rutas circulares,33.33333333333333,,"  Significado: Porcentaje de rutas que terminan en el mismo evento donde empezaron.
+  Interpretación: Puede indicar confusión del usuario o problemas de navegación. Si el resultado es 10.0, significa que el 10% de las rutas terminan donde empezaron, lo que puede indicar usuarios que se perdieron en la navegación o problemas en la interfaz que hacen que los usuarios vuelvan al punto de partida."
+Excesiva repetición de eventos,0.0,,"  Significado: Porcentaje de rutas donde un evento se repite más de lo normal.
+  Interpretación: Puede indicar problemas técnicos, confusión del usuario o errores en la interfaz. Si el resultado es 5.0, significa que el 5% de las rutas tienen eventos que se repiten más de 3 veces, lo que puede indicar problemas técnicos (como botones que no responden) o usuarios confundidos que repiten acciones sin éxito."
+Abandono después de evento clave,66.66666666666666,,"  Significado: Porcentaje de usuarios que abandonan después de un evento específico (ej: begin_checkout).
+  Interpretación: Identifica puntos críticos donde los usuarios se van, indicando posibles problemas en esos pasos. Si el resultado es 40.0, significa que el 40% de los usuarios que llegan a ""begin_checkout"" abandonan después, lo que indica un problema crítico en el proceso de checkout que necesita atención inmediata.
+# Notas
+- Si un KPI da 0 o un valor inesperado, revisa si tus datos realmente contienen casos que cumplan la condición.
+- Verifica que el mapping y los parámetros (por ejemplo, evento_conversion, step, etc.) sean correctos y coincidan con los valores reales de tus datos.
+- Usa los prints de depuración para ver qué columnas y valores está usando el script. "
+Usuarios con más de X eventos antes de la conversión,"(0, set())",purchase_GA4,"  Significado: Número de usuarios que realizaron más de X eventos antes de llegar a la conversión (por ejemplo, antes de ""purchase"").
+  Interpretación: Si el resultado es (2, {'user1', 'user3'}), significa que 2 usuarios (user1 y user3) hicieron más de X eventos antes de convertir."
+Sesiones con múltiples conversiones,1,purchase_GA4,"  Significado: Número de sesiones donde el evento de conversión ocurre más de una vez.
+  Interpretación: Si el resultado es 1, solo una sesión tuvo más de una conversión."
+Rutas con múltiples conversiones,1,purchase_GA4,"  Significado: Número de rutas (secuencias de eventos) donde el evento de conversión ocurre dos o más veces.
+  Interpretación: Si el resultado es 1, solo una ruta tiene múltiples conversiones."
+Número de pasos medio hasta la primera conversión,1.5,purchase_GA4,"  Significado: Promedio de pasos que realiza un usuario desde el primer evento hasta la primera conversión.
+  Interpretación: Si el resultado es 4.0, en promedio los usuarios hacen 4 eventos antes de convertir por primera vez."
+Número de pasos medio entre conversiones sucesivas,0.0,purchase_GA4,"  Significado: Promedio de pasos entre una conversión y la siguiente, para usuarios con múltiples conversiones.
+  Interpretación: Si el resultado es 2.5, en promedio hay 2-3 eventos entre conversiones sucesivas."

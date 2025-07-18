@@ -3,4 +3,5 @@ pandas[parquet]
 plotly
 numpy
 dash-bootstrap-components
-pyyaml 
+pyyaml
+openpyxl 
