@@ -12,20 +12,21 @@ def parsear_eventos(ruta, sep=' - '):
             evento = partes[1].strip()
         else:
             evento = partes[0].strip()
-        # Eliminar símbolos no alfanuméricos al principio y final
-        evento = re.sub(r'^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$', '', evento)
+        # Eliminar números y símbolos no alfanuméricos al principio y final
+        evento = re.sub(r'^[\W\d\s]+|[\W\s]+$', '', evento)
         eventos.append(evento)
     return eventos
 
-def kpi_drop_off_rate(df, user_col, ruta_col, step):
+def kpi_drop_off_rate(df, user_col, ruta_col, step, evento_conversion="purchase"):
     usuarios_en_step = set()
     usuarios_abandonan = set()
     for _, row in df.iterrows():
         eventos = parsear_eventos(row[ruta_col])
         if step in eventos:
             usuarios_en_step.add(row[user_col])
-            idx = [i for i, ev in enumerate(eventos) if ev == step]
-            if idx and idx[-1] == len(eventos) - 2:
+            # Verificar si tiene conversión
+            tiene_conversion = any(evento_conversion in ev for ev in eventos)
+            if not tiene_conversion:
                 usuarios_abandonan.add(row[user_col])
     if not usuarios_en_step:
         return 0
@@ -90,10 +91,22 @@ def kpi_path_entropy(df, user_col, ruta_col):
     counts = Counter(rutas)
     return -sum((c/total) * log(c/total) for c in counts.values()) if total else 0
 
-def kpi_most_common_entry_event(df, user_col, ruta_col):
+def kpi_most_common_entry_event(df, user_col, ruta_col, top_n=5):
     entradas = [parsear_eventos(row[ruta_col])[0] for _, row in df.iterrows() if parsear_eventos(row[ruta_col])]
     from collections import Counter
-    return Counter(entradas).most_common(1)[0][0] if entradas else None
+    counter = Counter(entradas)
+    # Devolver tabla con top N eventos más frecuentes
+    top_events = counter.most_common(top_n)
+    if not top_events:
+        return "No hay eventos de entrada"
+    
+    # Crear tabla formateada
+    tabla = []
+    for i, (evento, frecuencia) in enumerate(top_events, 1):
+        porcentaje = (frecuencia / len(entradas)) * 100
+        tabla.append(f"{i}. {evento}: {frecuencia} veces ({porcentaje:.1f}%)")
+    
+    return "\n".join(tabla)
 
 def kpi_last_event_before_dropoff_or_conversion(df, user_col, ruta_col, evento_conversion):
     ultimos = []
@@ -105,10 +118,22 @@ def kpi_last_event_before_dropoff_or_conversion(df, user_col, ruta_col, evento_c
                 ultimos.append(eventos[idx[0]-1])
     return ultimos
 
-def kpi_most_common_exit_point(df, user_col, ruta_col):
+def kpi_most_common_exit_point(df, user_col, ruta_col, top_n=5):
     salidas = [parsear_eventos(row[ruta_col])[-1] for _, row in df.iterrows() if parsear_eventos(row[ruta_col])]
     from collections import Counter
-    return Counter(salidas).most_common(1)[0][0] if salidas else None
+    counter = Counter(salidas)
+    # Devolver tabla con top N eventos más frecuentes
+    top_events = counter.most_common(top_n)
+    if not top_events:
+        return "No hay eventos de salida"
+    
+    # Crear tabla formateada
+    tabla = []
+    for i, (evento, frecuencia) in enumerate(top_events, 1):
+        porcentaje = (frecuencia / len(salidas)) * 100
+        tabla.append(f"{i}. {evento}: {frecuencia} veces ({porcentaje:.1f}%)")
+    
+    return "\n".join(tabla)
 
 def kpi_event_repetition_rate(df, user_col, ruta_col):
     repeticiones = 0

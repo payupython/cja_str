@@ -13,7 +13,8 @@ kpi_specific_mapping:
   drop_off_rate:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
-    step: "begin_checkout"  # Cambia por el evento/paso que quieras analizar
+    step: "first_visit"  # Cambia por el evento/paso que quieras analizar
+    evento_conversion: "purchase_GA4"
   backtracking_rate:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
@@ -41,6 +42,7 @@ kpi_specific_mapping:
   most_common_entry_event:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
+    top_n: 3
   last_event_before_dropoff_or_conversion:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
@@ -48,6 +50,7 @@ kpi_specific_mapping:
   most_common_exit_point:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
+    top_n: 3
   event_repetition_rate:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
