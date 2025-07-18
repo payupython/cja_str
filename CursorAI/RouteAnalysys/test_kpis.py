@@ -310,6 +310,83 @@ def kpi_most_common_2grams(df, user_col, ruta_col, top_n=10):
     
     return "\n".join(tabla)
 
+def kpi_post_conversion_navigation(df, user_col, ruta_col, evento_conversion):
+    """Detecta rutas que tienen conversión pero continúan navegando después"""
+    rutas_anomalas = 0
+    total_con_conversion = 0
+    
+    for _, row in df.iterrows():
+        eventos = parsear_eventos(row[ruta_col])
+        indices_conversion = [i for i, ev in enumerate(eventos) if evento_conversion in ev]
+        
+        if indices_conversion:  # Tiene conversión
+            total_con_conversion += 1
+            # Verificar si hay eventos después de la última conversión
+            ultima_conversion = max(indices_conversion)
+            if ultima_conversion < len(eventos) - 1:
+                rutas_anomalas += 1
+    
+    return (rutas_anomalas / total_con_conversion) * 100 if total_con_conversion else 0
+
+def kpi_rapid_conversion_anomaly(df, user_col, ruta_col, evento_conversion, min_steps=2):
+    """Detecta conversiones muy rápidas (pocos pasos antes de conversión)"""
+    conversiones_rapidas = 0
+    total_conversiones = 0
+    
+    for _, row in df.iterrows():
+        eventos = parsear_eventos(row[ruta_col])
+        try:
+            idx = next(i for i, ev in enumerate(eventos) if evento_conversion in ev)
+            total_conversiones += 1
+            if idx < min_steps:  # Conversión en menos de X pasos
+                conversiones_rapidas += 1
+        except StopIteration:
+            continue
+    
+    return (conversiones_rapidas / total_conversiones) * 100 if total_conversiones else 0
+
+def kpi_circular_navigation(df, user_col, ruta_col):
+    """Detecta rutas circulares (mismo evento al inicio y final)"""
+    rutas_circulares = 0
+    
+    for _, row in df.iterrows():
+        eventos = parsear_eventos(row[ruta_col])
+        if len(eventos) > 1 and eventos[0] == eventos[-1]:
+            rutas_circulares += 1
+    
+    return (rutas_circulares / len(df)) * 100 if len(df) else 0
+
+def kpi_excessive_event_repetition(df, user_col, ruta_col, max_repetitions=3):
+    """Detecta rutas con excesiva repetición del mismo evento"""
+    rutas_excesivas = 0
+    
+    for _, row in df.iterrows():
+        eventos = parsear_eventos(row[ruta_col])
+        from collections import Counter
+        counter = Counter(eventos)
+        if any(freq > max_repetitions for freq in counter.values()):
+            rutas_excesivas += 1
+    
+    return (rutas_excesivas / len(df)) * 100 if len(df) else 0
+
+def kpi_abandonment_after_key_event(df, user_col, ruta_col, key_event):
+    """Detecta abandono después de un evento clave específico"""
+    abandonos_despues_clave = 0
+    total_con_clave = 0
+    
+    for _, row in df.iterrows():
+        eventos = parsear_eventos(row[ruta_col])
+        indices_clave = [i for i, ev in enumerate(eventos) if key_event in ev]
+        
+        if indices_clave:
+            total_con_clave += 1
+            ultimo_clave = max(indices_clave)
+            # Si el evento clave está en la penúltima posición o antes, es abandono
+            if ultimo_clave < len(eventos) - 1:
+                abandonos_despues_clave += 1
+    
+    return (abandonos_despues_clave / total_con_clave) * 100 if total_con_clave else 0
+
 # --- Diccionario de funciones KPI ---
 KPI_FUNCTIONS = {
     "drop_off_rate": kpi_drop_off_rate,
@@ -337,6 +414,11 @@ KPI_FUNCTIONS = {
     "Número de pasos medio entre conversiones sucesivas": kpi_pasos_entre_conversiones,
     "Eventos más frecuentes": kpi_most_common_events,
     "Secuencias de 2 eventos más frecuentes": kpi_most_common_2grams,
+    "Rutas con navegación anómala post-conversión": kpi_post_conversion_navigation,
+    "Conversiones rápidas anómalas": kpi_rapid_conversion_anomaly,
+    "Rutas circulares": kpi_circular_navigation,
+    "Excesiva repetición de eventos": kpi_excessive_event_repetition,
+    "Abandono después de evento clave": kpi_abandonment_after_key_event,
 }
 
 def cargar_insights():

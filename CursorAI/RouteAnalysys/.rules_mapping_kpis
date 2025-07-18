@@ -85,6 +85,26 @@ kpi_specific_mapping:
     usuario: "user_id"
     secuencia_eventos: "Interactions"
     top_n: 10
+  "Rutas con navegación anómala post-conversión":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+  "Conversiones rápidas anómalas":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    evento_conversion: "purchase_GA4"
+    min_steps: 2
+  "Rutas circulares":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  "Excesiva repetición de eventos":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    max_repetitions: 3
+  "Abandono después de evento clave":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    key_event: "begin_checkout"
   "Usuarios con más de X eventos antes de la conversión":
     usuario: "user_id"
     secuencia_eventos: "Interactions"

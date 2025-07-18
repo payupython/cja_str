@@ -79,6 +79,26 @@ KPI: Secuencias de 2 eventos más frecuentes
   Significado: Patrones de navegación más comunes donde un evento es seguido inmediatamente por otro.
   Interpretación: Identifica los flujos de navegación más naturales y puede revelar patrones de comportamiento esperados o inesperados.
 
+KPI: Rutas con navegación anómala post-conversión
+  Significado: Porcentaje de rutas que tienen conversión pero continúan navegando después.
+  Interpretación: Un valor alto puede indicar problemas en el proceso de conversión o usuarios confundidos que siguen navegando después de comprar. Si el resultado es 25.0, significa que el 25% de las rutas con conversión continúan navegando después, lo que puede indicar problemas en la confirmación de compra o usuarios que no entienden que ya completaron la transacción.
+
+KPI: Conversiones rápidas anómalas
+  Significado: Porcentaje de conversiones que ocurren muy rápidamente (pocos pasos).
+  Interpretación: Puede indicar usuarios muy decididos, pero también posibles fraudes o errores en el tracking. Si el resultado es 15.0, significa que el 15% de las conversiones ocurren en menos de 2 pasos, lo que puede indicar usuarios que ya sabían qué querían comprar, pero también posibles actividades fraudulentas o errores en el sistema de tracking.
+
+KPI: Rutas circulares
+  Significado: Porcentaje de rutas que terminan en el mismo evento donde empezaron.
+  Interpretación: Puede indicar confusión del usuario o problemas de navegación. Si el resultado es 10.0, significa que el 10% de las rutas terminan donde empezaron, lo que puede indicar usuarios que se perdieron en la navegación o problemas en la interfaz que hacen que los usuarios vuelvan al punto de partida.
+
+KPI: Excesiva repetición de eventos
+  Significado: Porcentaje de rutas donde un evento se repite más de lo normal.
+  Interpretación: Puede indicar problemas técnicos, confusión del usuario o errores en la interfaz. Si el resultado es 5.0, significa que el 5% de las rutas tienen eventos que se repiten más de 3 veces, lo que puede indicar problemas técnicos (como botones que no responden) o usuarios confundidos que repiten acciones sin éxito.
+
+KPI: Abandono después de evento clave
+  Significado: Porcentaje de usuarios que abandonan después de un evento específico (ej: begin_checkout).
+  Interpretación: Identifica puntos críticos donde los usuarios se van, indicando posibles problemas en esos pasos. Si el resultado es 40.0, significa que el 40% de los usuarios que llegan a "begin_checkout" abandonan después, lo que indica un problema crítico en el proceso de checkout que necesita atención inmediata.
+
 # Notas
 - Si un KPI da 0 o un valor inesperado, revisa si tus datos realmente contienen casos que cumplan la condición.
 - Verifica que el mapping y los parámetros (por ejemplo, evento_conversion, step, etc.) sean correctos y coincidan con los valores reales de tus datos.
