@@ -125,4 +125,19 @@ kpi_specific_mapping:
   "Número de pasos medio entre conversiones sucesivas":
     usuario: "user_id"
     secuencia_eventos: "Interactions"
-    evento_conversion: "purchase_GA4" 
+    evento_conversion: "purchase_GA4"
+  # Nuevos KPIs de agrupación por usuarios
+  "Rutas más populares por usuarios únicos":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    top_n: 5
+  "Distribución de usuarios por ruta":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+  "Rutas con alta concentración de usuarios":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions"
+    threshold_percent: 10
+  "Diversidad de rutas":
+    usuario: "user_id"
+    secuencia_eventos: "Interactions" 

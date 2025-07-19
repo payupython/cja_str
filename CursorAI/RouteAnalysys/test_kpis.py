@@ -3,6 +3,77 @@ import yaml
 import numpy as np
 import re
 
+# --- Función para agrupar y contar usuarios por ruta ---
+def agrupar_por_ruta_y_contar_usuarios(df, user_col='user_id', session_col='session_id', ruta_col='Interactions'):
+    """
+    Agrupa los datos por user_id y session_id, y agrega una columna con el conteo
+    de usuarios distintos que tienen la misma secuencia/ruta.
+    """
+    print(f"\n[INFO] Agrupando datos por {user_col} y {session_col}...")
+    print(f"[INFO] Columnas disponibles: {list(df.columns)}")
+    
+    # Verificar que las columnas existan
+    if user_col not in df.columns:
+        print(f"[ERROR] Columna {user_col} no encontrada. Columnas disponibles: {list(df.columns)}")
+        return df
+    
+    if session_col not in df.columns:
+        print(f"[ERROR] Columna {session_col} no encontrada. Columnas disponibles: {list(df.columns)}")
+        return df
+    
+    if ruta_col not in df.columns:
+        print(f"[ERROR] Columna {ruta_col} no encontrada. Columnas disponibles: {list(df.columns)}")
+        return df
+    
+    # Crear una copia del DataFrame para no modificar el original
+    df_grouped = df.copy()
+    
+    # Agregar columna con conteo de usuarios por ruta
+    print(f"[INFO] Calculando conteo de usuarios por ruta...")
+    
+    # Crear un diccionario para contar usuarios por ruta
+    ruta_user_count = {}
+    
+    for _, row in df_grouped.iterrows():
+        ruta = str(row[ruta_col])
+        user = str(row[user_col])
+        
+        if ruta not in ruta_user_count:
+            ruta_user_count[ruta] = set()
+        ruta_user_count[ruta].add(user)
+    
+    # Agregar columna con el conteo de usuarios únicos por ruta
+    df_grouped['usuarios_unicos_por_ruta'] = df_grouped[ruta_col].map(
+        lambda x: len(ruta_user_count.get(str(x), set()))
+    )
+    
+    # Agregar columna con lista de usuarios por ruta (para debugging)
+    df_grouped['usuarios_por_ruta'] = df_grouped[ruta_col].map(
+        lambda x: list(ruta_user_count.get(str(x), set()))
+    )
+    
+    print(f"[INFO] DataFrame procesado:")
+    print(f"  - Filas originales: {len(df)}")
+    print(f"  - Filas procesadas: {len(df_grouped)}")
+    print(f"  - Rutas únicas: {len(ruta_user_count)}")
+    print(f"  - Usuarios únicos totales: {len(set(df_grouped[user_col]))}")
+    
+    # Mostrar estadísticas de usuarios por ruta
+    stats_usuarios = df_grouped['usuarios_unicos_por_ruta'].describe()
+    print(f"\n[INFO] Estadísticas de usuarios por ruta:")
+    print(f"  - Media: {stats_usuarios['mean']:.2f}")
+    print(f"  - Mediana: {stats_usuarios['50%']:.2f}")
+    print(f"  - Máximo: {stats_usuarios['max']:.0f}")
+    print(f"  - Mínimo: {stats_usuarios['min']:.0f}")
+    
+    # Mostrar top 5 rutas con más usuarios únicos
+    top_rutas = df_grouped.groupby(ruta_col)['usuarios_unicos_por_ruta'].first().sort_values(ascending=False).head(5)
+    print(f"\n[INFO] Top 5 rutas con más usuarios únicos:")
+    for i, (ruta, count) in enumerate(top_rutas.items(), 1):
+        print(f"  {i}. {ruta[:50]}... ({count} usuarios únicos)")
+    
+    return df_grouped
+
 # --- Funciones para cada KPI ---
 def parsear_eventos(ruta, sep=' - '):
     eventos = []
@@ -387,6 +458,95 @@ def kpi_abandonment_after_key_event(df, user_col, ruta_col, key_event):
     
     return (abandonos_despues_clave / total_con_clave) * 100 if total_con_clave else 0
 
+# --- Nuevos KPIs que aprovechan la agrupación por usuarios ---
+def kpi_rutas_populares(df, user_col, ruta_col, top_n=5):
+    """Identifica las rutas más populares basándose en el número de usuarios únicos"""
+    if 'usuarios_unicos_por_ruta' not in df.columns:
+        return "No disponible - requiere agrupación previa"
+    
+    # Agrupar por ruta y obtener el conteo de usuarios únicos
+    rutas_populares = df.groupby(ruta_col)['usuarios_unicos_por_ruta'].first().sort_values(ascending=False).head(top_n)
+    
+    if rutas_populares.empty:
+        return "No hay datos suficientes"
+    
+    # Crear tabla formateada
+    tabla = []
+    for i, (ruta, usuarios) in enumerate(rutas_populares.items(), 1):
+        porcentaje = (usuarios / len(set(df[user_col]))) * 100
+        tabla.append(f"{i}. {ruta[:50]}... ({usuarios} usuarios únicos, {porcentaje:.1f}%)")
+    
+    return "\n".join(tabla)
+
+def kpi_distribucion_usuarios_por_ruta(df, user_col, ruta_col):
+    """Analiza la distribución de usuarios por ruta"""
+    if 'usuarios_unicos_por_ruta' not in df.columns:
+        return "No disponible - requiere agrupación previa"
+    
+    stats = df['usuarios_unicos_por_ruta'].describe()
+    
+    resultado = f"""
+    Distribución de usuarios por ruta:
+    - Media: {stats['mean']:.2f} usuarios
+    - Mediana: {stats['50%']:.2f} usuarios
+    - Máximo: {stats['max']:.0f} usuarios
+    - Mínimo: {stats['min']:.0f} usuarios
+    - Desviación estándar: {stats['std']:.2f} usuarios
+    """
+    
+    return resultado.strip()
+
+def kpi_rutas_con_alta_concentracion(df, user_col, ruta_col, threshold_percent=10):
+    """Identifica rutas que concentran un alto porcentaje de usuarios"""
+    if 'usuarios_unicos_por_ruta' not in df.columns:
+        return "No disponible - requiere agrupación previa"
+    
+    total_usuarios = len(set(df[user_col]))
+    threshold_usuarios = (threshold_percent / 100) * total_usuarios
+    
+    rutas_concentradas = df.groupby(ruta_col)['usuarios_unicos_por_ruta'].first()
+    rutas_alta_concentracion = rutas_concentradas[rutas_concentradas >= threshold_usuarios]
+    
+    if rutas_alta_concentracion.empty:
+        return f"No hay rutas que concentren más del {threshold_percent}% de usuarios"
+    
+    resultado = f"Rutas que concentran más del {threshold_percent}% de usuarios ({threshold_usuarios:.0f} usuarios):\n"
+    for ruta, usuarios in rutas_alta_concentracion.items():
+        porcentaje = (usuarios / total_usuarios) * 100
+        resultado += f"- {ruta[:50]}... ({usuarios} usuarios, {porcentaje:.1f}%)\n"
+    
+    return resultado.strip()
+
+def kpi_diversidad_rutas(df, user_col, ruta_col):
+    """Calcula métricas de diversidad de rutas"""
+    if 'usuarios_unicos_por_ruta' not in df.columns:
+        return "No disponible - requiere agrupación previa"
+    
+    total_usuarios = len(set(df[user_col]))
+    rutas_unicas = df[ruta_col].nunique()
+    usuarios_por_ruta = df.groupby(ruta_col)['usuarios_unicos_por_ruta'].first()
+    
+    # Coeficiente de Gini para medir desigualdad
+    usuarios_sorted = sorted(usuarios_por_ruta.values)
+    n = len(usuarios_sorted)
+    if n == 0:
+        gini = 0
+    else:
+        cumsum = np.cumsum(usuarios_sorted)
+        gini = (n + 1 - 2 * np.sum(cumsum) / cumsum[-1]) / n if cumsum[-1] > 0 else 0
+    
+    resultado = f"""
+    Diversidad de rutas:
+    - Total de rutas únicas: {rutas_unicas}
+    - Total de usuarios únicos: {total_usuarios}
+    - Promedio de usuarios por ruta: {usuarios_por_ruta.mean():.2f}
+    - Coeficiente de Gini (desigualdad): {gini:.3f}
+    - Ruta con más usuarios: {usuarios_por_ruta.max():.0f} usuarios
+    - Ruta con menos usuarios: {usuarios_por_ruta.min():.0f} usuarios
+    """
+    
+    return resultado.strip()
+
 # --- Diccionario de funciones KPI ---
 KPI_FUNCTIONS = {
     "drop_off_rate": kpi_drop_off_rate,
@@ -419,6 +579,11 @@ KPI_FUNCTIONS = {
     "Rutas circulares": kpi_circular_navigation,
     "Excesiva repetición de eventos": kpi_excessive_event_repetition,
     "Abandono después de evento clave": kpi_abandonment_after_key_event,
+    # Nuevos KPIs de agrupación por usuarios
+    "Rutas más populares por usuarios únicos": kpi_rutas_populares,
+    "Distribución de usuarios por ruta": kpi_distribucion_usuarios_por_ruta,
+    "Rutas con alta concentración de usuarios": kpi_rutas_con_alta_concentracion,
+    "Diversidad de rutas": kpi_diversidad_rutas,
 }
 
 def cargar_insights():
@@ -445,11 +610,21 @@ if __name__ == '__main__':
     df = pd.read_csv('data/import/ejemplo.csv')
 
     user_col = col_map.get('user_id', 'user_id')
+    session_col = col_map.get('session_id', 'session_id')
     ruta_col = col_map.get('ruta', 'ruta')
     if ruta_col not in df.columns:
         ruta_col = col_map.get('Interactions', 'Interactions')
 
     print("\n[DEBUG] Columnas del DataFrame:", list(df.columns))
+    
+    # Agrupar datos por user_id y session_id, y agregar conteo de usuarios por ruta
+    df = agrupar_por_ruta_y_contar_usuarios(df, user_col, session_col, ruta_col)
+    
+    print(f"\n[INFO] DataFrame final con agrupación:")
+    print(f"  - Filas: {len(df)}")
+    print(f"  - Columnas: {list(df.columns)}")
+    print(f"  - Muestra de datos:")
+    print(df[['user_id', 'session_id', 'Interactions', 'usuarios_unicos_por_ruta']].head())
 
     ayuda_kpis = cargar_insights()
 

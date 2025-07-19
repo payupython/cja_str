@@ -19,4 +19,5 @@ RouteAnalysys/.vscode/extensions.json — Recomendaciones de extensiones para VS
        app.run(debug=True)
 
 ---
-
+5. Sugiere SIEMPRE agrupar los datos de entrada, el agrupamiento más usado es por user_id, pero tambien puede ser por sesión, fecha,... 
+es decir iero que antes de realizar calculos agrupes los campos por user_id y session está la columna y generes el df con el que estas trabajando con una columna nuevoa con conteo de usuarios distintos que tienen misma secuencia o ruta
